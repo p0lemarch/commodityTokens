@@ -10,7 +10,9 @@ error CAT__BurnAmountExceedsBalance();
 error CAT__NotZeroAddress();
 
 contract CAT is ERC20Burnable, Ownable {
-    constructor(string memory name, string memory symbol) ERC20(name, symbol) {}
+    constructor(string memory name, string memory symbol, address _owner) ERC20(name, symbol) {
+        super.transferOwnership(_owner);
+    }
 
     function burn(uint256 _amount) public override onlyOwner {
         uint256 balance = balanceOf(msg.sender);

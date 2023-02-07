@@ -19,9 +19,9 @@ const networkConfig = {
             fWBTC: "0xA39434A63A52E749F02807ae27335515BA4b07F7",
         },
         tokenContracts: {
+            WETH: "0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6",
             WBTC: "0x8dc14D1c5A273c33E22eFE9647Ec242175A2ad4b",
             LINK: "0x326C977E6efc84E512bB9C30f76E30c160eD06FB",
-            WETH: "0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6",
             fWBTC: "0x1199485d5A23D925964440B1196A45EFccA646E3", //a fake WBTC controlled by us
         },
         oracleContract: "0xcc79157eb46f5624204f47ab42b3906caa40eab7",
