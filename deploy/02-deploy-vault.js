@@ -1,10 +1,10 @@
 const { networkConfig, developmentChains } = require("../helper-hardhat-config")
-const { network } = require("hardhat")
+const { network, ethers } = require("hardhat")
 const { verify } = require("../utils/verify")
 
 module.exports = async ({ getNamedAccounts, deployments }) => {
     const { deploy, log } = deployments
-    const { deployer } = await getNamedAccounts()
+    const [owner] = await ethers.getSigners()
     const chainId = network.config.chainId
 
     //set price feed addresses correctly depending on network
@@ -58,32 +58,36 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
         const COMMODITY_USD_AGGREGATOR = await deployments.get(commodityName + "_priceFeed")
         commodityPriceFeedAddresses.push(COMMODITY_USD_AGGREGATOR.address)
     }
+    let commodities = existingCommodities.concat(newCommodities)
 
+    const transactionCount = await owner.getTransactionCount()
     const vaultAddress = ethers.utils.getContractAddress({
         from: owner.address,
         nonce: transactionCount + commodities.length,
     })
+    console.log(`expected vault address: ${vaultAddress}`)
     let commodityTokens = []
     let commodityArgs = []
-    //deploy commodities
-    let commodities = existingCommodities.concat(newCommodities)
+    let commodityTokenAddresses = []
 
+    //deploy commodities
     for (let i = 0; i < commodities.length; i++) {
         const args = [commodities[i], commodities[i], vaultAddress]
-        const commodityToken = await deploy(commodityName + "_token", {
-            contract: cat,
-            from: deployer,
+        const commodityToken = await deploy(commodities[i] + "_token", {
+            contract: "CAT",
+            from: owner.address,
             args: args,
             log: true,
         })
         commodityArgs.push(args)
         commodityTokens.push(commodityToken)
+        commodityTokenAddresses.push(commodityToken.address)
     }
 
     //deploy vault
     const args = [
         commodities,
-        commodities,
+        commodityTokenAddresses,
         commodityPriceFeedAddresses,
         [contractAddress_WETH, contractAddress_WBTC, contractAddress_LINK, contractAddress_fWBTC],
         [WETH_USD_PriceFeedaddress, WBTC_USD_PriceFeedAddress, LINK_USD_PriceFeedAddress, fWBTC_USD_PriceFeedAddress],
@@ -91,7 +95,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     ]
     const vault = await deploy("vault", {
         contract: "Vault",
-        from: deployer,
+        from: owner.address,
         args: args,
         log: true,
     })
