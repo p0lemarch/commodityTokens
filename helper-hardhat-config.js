@@ -8,6 +8,7 @@ const networkConfig = {
         name: "goerli",
         existingCommodities: ["XAU", "BRENTOIL", "COAL"], //already deployed pricefeeds (chainlink data feeds or aldready deployed by us)
         newCommodities: ["ETHANOL"],
+        collateralTokens: ["WETH", "WBTC", "LINK", "fWBTC"],
         pricefeeds: {
             XAU: "0x7b219F57a8e9C7303204Af681e9fA69d17ef626f", //only chainlink commodity pricefeed on goerli
             BRENTOIL: "0x4b027213045c5F39E25DF2EA4298D85bBd726A8A",
@@ -25,6 +26,25 @@ const networkConfig = {
             fWBTC: "0x1199485d5A23D925964440B1196A45EFccA646E3", //a fake WBTC controlled by us
         },
         oracleContract: "0xcc79157eb46f5624204f47ab42b3906caa40eab7",
+    },
+    80001: {
+        name: "mumbai",
+        existingCommodities: [], //already deployed pricefeeds (chainlink data feeds or aldready deployed by us)
+        newCommodities: ["XAG", "BRENTOIL", "COAL"],
+        collateralTokens: ["WMATIC", "WBTC", "LINK", "fWBTC"],
+        pricefeeds: {
+            WMATIC: "0xd0D5e3DB44DE05E9F294BB0a3bEEaF030DE24Ada",
+            WBTC: "0x007A22900a3B98143368Bd5906f8E17e9867581b",
+            LINK: "0x1C2252aeeD50e0c9B64bDfF2735Ee3C932F5C408",
+            fWBTC: "0x007A22900a3B98143368Bd5906f8E17e9867581b",
+        },
+        tokenContracts: {
+            WMATIC: "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+            WBTC: "0x0d787a4a1548f673ed375445535a6c7A1EE56180",
+            LINK: "0x70d1F773A9f81C852087B77F6Ae6d3032B02D2AB",
+            fWBTC: "0xd7148e1aeEeE5dB96eEF846d54dFA68f03f3f92B", //a fake WBTC controlled by us for demoing
+        },
+        oracleContract: "0x40193c8518BB267228Fc409a613bDbD8eC5a97b3",
     },
     1: {
         name: "ethereum",

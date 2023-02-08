@@ -8,8 +8,11 @@ require("dotenv").config()
 
 const COINMARKETCAP_API_KEY = process.env.COINMARKETCAP_API_KEY || ""
 const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY || ""
+const POLYGONSCAN_API_KEY = process.env.POLYGONSCAN_API_KEY || ""
 const GOERLI_RPC_URL = process.env.GOERLI_RPC_URL || "https://eth-mainnet.alchemyapi.io/v2/your-api-key"
 const PRIVATE_KEY = process.env.PRIVATE_KEY || "0x11ee3108a03081fe260ecdc106554d09d9d1209bcafd46942b10e02943effc4a"
+const POLYGON_RPC_URL = process.env.POLYGON_RPC_URL || "https://eth-mainnet.alchemyapi.io/v2/your-api-key"
+const MUMBAI_RPC_URL = process.env.MUMBAI_RPC_URL || "https://eth-mainnet.alchemyapi.io/v2/your-api-key"
 
 module.exports = {
     solidity: "0.8.17",
@@ -25,6 +28,13 @@ module.exports = {
             chainId: 5,
             blockConfirmations: 6,
             gasPrice: 730000000000,
+        },
+        mumbai: {
+            url: MUMBAI_RPC_URL,
+            accounts: [PRIVATE_KEY],
+            chainId: 80001,
+            blockConfirmations: 6,
+            gasPrice: 1515284924,
         },
     },
     gasReporter: {
@@ -51,6 +61,8 @@ module.exports = {
     etherscan: {
         apiKey: {
             goerli: ETHERSCAN_API_KEY,
+            polygon: POLYGONSCAN_API_KEY,
+            polygonMumbai: POLYGONSCAN_API_KEY,
         },
     },
 }

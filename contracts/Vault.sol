@@ -2,7 +2,6 @@
 pragma solidity ^0.8.7;
 
 //// @title A commodity vault contract
-//// @author Reginald Dewil
 //// @notice deposit collateral and mint/borrow commodity tokens valued according to separate price feed contracts
 //// @dev based on sample stablecoin contract found here https://github.com/smartcontractkit/defi-minimal/blob/main/contracts/stablecoins/exogenousAnchoredCoin/DSCEngine.sol
 ////        modified to allow multiple collateral types and multiple price feeds - token to mint also has a price and is not assumed to be worth 1 USD as in stablecoin case

@@ -2,7 +2,6 @@
 pragma solidity ^0.8.0;
 
 //// @title  A pricefeed contract using chainlink any-api and being updated every x minutes through chainlink automation (used web interface for this)
-//// @author Reginald Dewil
 //// @dev current setup is to deploy one pricefeed contract per commodity because of timing issues.
 ////        In a next iteration a custom job needs to be defined to to do a single api call to commodities-api and extract all relevant commodities prices
 ////        That approach would be much more gas efficient + less api calls which for most providers also costs $
@@ -61,8 +60,8 @@ contract PriceFeed is ChainlinkClient, AggregatorV3Interface {
         s_price = price;
         s_updatedAt = block.timestamp;
 
-        setChainlinkToken(link_tokenAddress); //goerli: 0x326C977E6efc84E512bB9C30f76E30c160eD06FB
-        setChainlinkOracle(chainlinkOracleAddress); //goerli: 0xCC79157eb46F5624204f47AB42b3906cAA40eaB7
+        setChainlinkToken(link_tokenAddress);
+        setChainlinkOracle(chainlinkOracleAddress);
         i_anyApi_jobId = "fcf4140d696d44b687012232948bdd5d";
         s_apiUrl = apiUrl;
         s_path = path;
