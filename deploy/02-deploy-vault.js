@@ -65,7 +65,6 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
         from: owner.address,
         nonce: transactionCount + commodities.length,
     })
-    console.log(`expected vault address: ${vaultAddress}`)
     let commodityTokens = []
     let commodityArgs = []
     let commodityTokenAddresses = []
@@ -82,6 +81,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
         commodityArgs.push(args)
         commodityTokens.push(commodityToken)
         commodityTokenAddresses.push(commodityToken.address)
+        //console.log(`Deployed ${commodities[i]} token`)
     }
 
     //deploy vault
@@ -99,6 +99,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
         args: args,
         log: true,
     })
+    //console.log(`Deployed vault`)
 
     //verify
     if (!developmentChains.includes(network.name) && process.env.ETHERSCAN_API_KEY) {
@@ -111,4 +112,4 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     log("-------------------------------")
 }
 
-module.exports.tags = ["all", "vaults"]
+module.exports.tags = ["all", "vault"]

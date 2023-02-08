@@ -39,6 +39,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
                 log: true,
                 args: [DECIMALS, initial_answer_prices_mocks[commodityName]],
             })
+            console.log(`deployed MockV3Aggregator${commodityName}`)
         }
 
         //deploy mock BTC and LINK contracts

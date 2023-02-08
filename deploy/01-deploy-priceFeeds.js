@@ -39,7 +39,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
             args: args,
             log: true,
         })
-        console.log(`Deployed ${commodityName} priceFeed`)
+        //console.log(`Deployed ${commodityName} priceFeed`)
 
         if (!developmentChains.includes(network.name) && process.env.ETHERSCAN_API_KEY) {
             await verify(feed.address, args)

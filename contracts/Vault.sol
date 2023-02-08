@@ -28,8 +28,8 @@ contract Vault is ReentrancyGuard, Ownable {
         CAT token;
         bool isCommodity;
     }
-    Commodity[] s_commodities;
-    mapping(address => Commodity) s_commoditiesByAddress;
+    Commodity[] public s_commodities;
+    mapping(address => Commodity) public s_commoditiesByAddress;
 
     uint256 public immutable i_collateral_weight; //8 decimals depending on historic asset volatility, more or less collateral is required to secure a position. 67% weight implies together with minimum health-level that 150% collateral is required for a given mint position
     uint256 public constant MIN_HEALTH_FACTOR = 1e18; //
@@ -39,9 +39,9 @@ contract Vault is ReentrancyGuard, Ownable {
     mapping(address => mapping(address => uint256)) public s_userToCATaddressToAmountMinted;
 
     address[] public s_collateralTokens;
-    mapping(address => bool) isCollateral;
+    mapping(address => bool) public isCollateral;
 
-    mapping(address => AggregatorV3Interface) s_priceFeeds;
+    mapping(address => address) public s_priceFeeds;
 
     event CollateralDeposited(address indexed user, uint256 indexed amount);
 
@@ -69,11 +69,11 @@ contract Vault is ReentrancyGuard, Ownable {
     ) {
         for (uint256 i = 0; i < commodityNames.length; i++) {
             s_commodities.push(Commodity(commodityNames[i], i, CAT(commodityTokenAddresses[i]), true));
-            s_priceFeeds[commodityTokenAddresses[i]] = AggregatorV3Interface(priceFeedsCommodities[i]);
+            s_priceFeeds[commodityTokenAddresses[i]] = priceFeedsCommodities[i];
             s_commoditiesByAddress[commodityTokenAddresses[i]] = s_commodities[i];
         }
         for (uint256 i = 0; i < allowedCollateralAddresses.length; i++) {
-            s_priceFeeds[allowedCollateralAddresses[i]] = AggregatorV3Interface(priceFeedsCollateral[i]);
+            s_priceFeeds[allowedCollateralAddresses[i]] = priceFeedsCollateral[i];
             isCollateral[allowedCollateralAddresses[i]] = true;
             s_collateralTokens.push(allowedCollateralAddresses[i]);
         }
@@ -187,13 +187,13 @@ contract Vault is ReentrancyGuard, Ownable {
     }
 
     function getUsdValueMintedTokensForUser(address user) public view returns (uint256 totalMintedValueInUsd) {
-        totalMintedValueInUsd = 0;
         for (uint i = 0; i < s_commodities.length; i++) {
-            (int256 price, ) = getPrice(address(s_commodities[i].token));
-            totalMintedValueInUsd +=
-                s_userToCATaddressToAmountMinted[user][address(s_commodities[i].token)] *
-                uint(price);
+            totalMintedValueInUsd += getUsdValue(
+                address(s_commodities[i].token),
+                s_userToCATaddressToAmountMinted[user][address(s_commodities[i].token)]
+            );
         }
+        return totalMintedValueInUsd;
     }
 
     function getCollateralAmountUsdForUser(address user) public view returns (uint256 totalCollateralValueInUsd) {
@@ -206,8 +206,8 @@ contract Vault is ReentrancyGuard, Ownable {
     }
 
     function getPrice(address tokenAddress) public view returns (int256 price, uint8 decimals) {
-        (, price, , , ) = s_priceFeeds[tokenAddress].latestRoundData();
-        decimals = s_priceFeeds[tokenAddress].decimals();
+        (, price, , , ) = AggregatorV3Interface(s_priceFeeds[tokenAddress]).latestRoundData();
+        decimals = AggregatorV3Interface(s_priceFeeds[tokenAddress]).decimals();
     }
 
     function getUsdValue(address tokenAddress, uint256 amount) public view returns (uint256) {
@@ -262,12 +262,18 @@ contract Vault is ReentrancyGuard, Ownable {
         require(startingUserHealthFactor < endingUserHealthFactor);
     }
 
-    function getCollateralTokens() external view returns (address[] memory) {
-        return s_collateralTokens;
+    function addNewCollateralType(address newCollateralAddress, address priceFeedAddress) public onlyOwner {
+        s_collateralTokens.push(newCollateralAddress);
+        isCollateral[newCollateralAddress] = true;
+        s_priceFeeds[newCollateralAddress] = priceFeedAddress;
     }
 
     function updatePriceFeed(address oldAddress, address newAddress) public onlyOwner {
-        s_priceFeeds[oldAddress] = AggregatorV3Interface(newAddress);
+        s_priceFeeds[oldAddress] = newAddress;
+    }
+
+    function getCollateralTokens() external view returns (address[] memory) {
+        return s_collateralTokens;
     }
 
     function getCollateralAmountOfTokenOfUser(address user, address tokenAddress) public view returns (uint256) {
@@ -278,9 +284,19 @@ contract Vault is ReentrancyGuard, Ownable {
         return s_userToCATaddressToAmountMinted[user][commodityToken];
     }
 
-    function addNewCollateralType(address newCollateralAddress, address priceFeedAddress) public onlyOwner {
-        s_collateralTokens.push(newCollateralAddress);
-        isCollateral[newCollateralAddress] = true;
-        s_priceFeeds[newCollateralAddress] = AggregatorV3Interface(priceFeedAddress);
+    function getCommodities() public view returns (Commodity[] memory) {
+        return s_commodities;
+    }
+
+    function getCommodity(address _address) public view returns (Commodity memory) {
+        return s_commoditiesByAddress[_address];
+    }
+
+    function isValidCollateral(address _address) public view returns (bool) {
+        return isCollateral[_address];
+    }
+
+    function getPriceFeed(address _tokenAddress) public view returns (address) {
+        return s_priceFeeds[_tokenAddress];
     }
 }

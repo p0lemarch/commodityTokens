@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 //// @title  A pricefeed contract using chainlink any-api and being updated every x minutes through chainlink automation (used web interface for this)
 //// @author Reginald Dewil
 //// @dev current setup is to deploy one pricefeed contract per commodity because of timing issues.
-////        In a next iteration a custom job needs to be defined to perform a multi-variable response with multiplication to retrieve decimal values
+////        In a next iteration a custom job needs to be defined to to do a single api call to commodities-api and extract all relevant commodities prices
 ////        That approach would be much more gas efficient + less api calls which for most providers also costs $
 
 import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
@@ -21,7 +21,7 @@ contract PriceFeed is ChainlinkClient, AggregatorV3Interface {
     uint256 public s_updatedAt;
 
     bytes32 private immutable i_anyApi_jobId;
-    uint256 private constant FEE = 10**17;
+    uint256 private constant FEE = 10 ** 17;
 
     string s_apiUrl;
     string s_path;
@@ -97,9 +97,9 @@ contract PriceFeed is ChainlinkClient, AggregatorV3Interface {
         view
         override
         returns (
-            uint80, /*roundId*/
+            uint80 /*roundId*/,
             int256 answer,
-            uint256, /*startedAt*/
+            uint256 /*startedAt*/,
             uint256 updatedAt,
             uint80 /*answeredInRound*/
         )
@@ -113,9 +113,9 @@ contract PriceFeed is ChainlinkClient, AggregatorV3Interface {
         view
         override
         returns (
-            uint80, /*roundId*/
+            uint80 /*roundId*/,
             int256 answer,
-            uint256, /*startedAt*/
+            uint256 /*startedAt*/,
             uint256 updatedAt,
             uint80 /*answeredInRound*/
         )
@@ -140,7 +140,7 @@ contract PriceFeed is ChainlinkClient, AggregatorV3Interface {
         //divide number!: the api unhelpfully returns a "price" equal to 1/price
         //the number has already been multiplied with 1e18
         //therefore to get a number with precision i_decimals, we need to multiply 1 by (1e18*1**i_decimals)
-        s_price = (1e18 * 10**i_decimals) / _price;
+        s_price = (1e18 * 10 ** i_decimals) / _price;
     }
 
     //TODO: remove function - for demo only - no one should have the power to replace the price

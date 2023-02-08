@@ -1,8 +1,8 @@
 const networkConfig = {
     31337: {
         name: "hardhat",
-        existingCommodities: ["XAU"],
-        newCommodities: ["BRENTOIL", "COAL"],
+        existingCommodities: ["XAU", "BRENTOIL", "COAL"],
+        newCommodities: [],
     },
     5: {
         name: "goerli",

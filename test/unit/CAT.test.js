@@ -6,7 +6,7 @@ describe("CAT contract", function () {
     beforeEach(async () => {
         owner = await ethers.getSigners()[0]
         const CATFactory = await ethers.getContractFactory("CAT")
-        CAT = await CATFactory.deploy("BRENTOIL", "BRENTOIL")
+        CAT = await CATFactory.deploy("BRENTOIL", "BRENTOIL", "0x0B306BF915C4d645ff596e518fAf3F9669b97016")
     })
     describe("constructor", function () {
         it("token name and symbol set correctly", async function () {
