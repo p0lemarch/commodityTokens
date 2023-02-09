@@ -16,12 +16,6 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     let collateralContracts, priceFeedsCollaterals
 
     if (developmentChains.includes(network.name)) {
-        priceFeedsCollaterals = []
-        for (let key of tokenContracts.keys()) {
-            const pricefeed = networkConfig[chainId]["pricefeeds"][key]
-            priceFeedsCollaterals.push(pricefeed)
-        }
-
         collateralContracts = [
             (await deployments.get("MockWBTC")).address,
             (await deployments.get("MockWETH")).address,
